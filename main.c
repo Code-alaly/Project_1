@@ -11,21 +11,21 @@
 
 //creating a different branch that will be used to do things like write the program
 
-/* struct for student information */
+/* struct for movie information */
 
 struct movie
 {
     char *title;
-    int *Year;
+    int *year;
     char *languages;
     int *rating;
     struct movie *next;
 };
 
 /* Parse the current line which is space delimited and create a
-*  student struct with the data in this line
+*  movie struct with the data in this line
 */
-struct movie *createStudent(char *currLine)
+struct movie *createmovie(char *currLine)
 {
     struct movie *pMovie = malloc(sizeof(struct movie));
 
@@ -33,39 +33,39 @@ struct movie *createStudent(char *currLine)
     char *saveptr;
 
     // The first token is the ONID
-    char *token = strtok_r(currLine, " ", &saveptr); // make a char pointer, basically get the item that it's on
+    char *token = strtok_r(currLine, ",", &saveptr); // make a char pointer, basically get the item that it's on
     pMovie->title = calloc(strlen(token) + 1, sizeof(char)); // pmovie points to title, which is the length of token, get the string
     strcpy(pMovie->title, token); //
 
-    // The next token is the lastName
-    token = strtok_r(NULL, " ", &saveptr);
-    pMovie->lastName = calloc(strlen(token) + 1, sizeof(char));
-    strcpy(pMovie->lastName, token);
+    // The next token is the year
+    token = strtok_r(NULL, ",", &saveptr);
+    pMovie->year = calloc(strlen(token) + 1, sizeof(char));
+    strcpy(pMovie->year, token);
 
     // The next token is the firstName
-    token = strtok_r(NULL, " ", &saveptr);
+    token = strtok_r(NULL, ",", &saveptr);
     pMovie->languages = calloc(strlen(token) + 1, sizeof(char));
     strcpy(pMovie->languages, token);
 
     // The last token is the rating
-    token = strtok_r(NULL, "\n", &saveptr);
+    token = strtok_r(NULL, "\r\n", &saveptr);
     pMovie->rating = calloc(strlen(token) + 1, sizeof(int));
     strcpy(pMovie->rating, token);
 
-    // Set the next node to NULL in the newly created student entry
+    // Set the next node to NULL in the newly created movie entry
     pMovie->next = NULL;
 
     return pMovie;
 }
 
 /*
-* Return a linked list of students by parsing data from
+* Return a linked list of movies by parsing data from
 * each line of the specified file.
 */
 struct movie *processFile(char *filePath)
 {
     // Open the specified file for reading only
-    FILE *studentFile = fopen(filePath, "r");
+    FILE *movieFile = fopen(filePath, "r");
 
     char *currLine = NULL;
     size_t len = 0;
@@ -73,15 +73,17 @@ struct movie *processFile(char *filePath)
     char *token;
 
     // The head of the linked list
-    struct student *head = NULL;
+    struct movie *head = NULL;
     // The tail of the linked list
-    struct student *tail = NULL;
+    struct movie *tail = NULL;
+
+    nread = getline(&currLine, &len, movieFile);
 
     // Read the file line by line
-    while ((nread = getline(&currLine, &len, studentFile)) != -1)
+    while ((nread = getline(&currLine, &len, movieFile)) != -1)
     {
-        // Get a new student node corresponding to the current line
-        struct student *newNode = createStudent(currLine);
+        // Get a new movie node corresponding to the current line
+        struct movie *newNode = createmovie(currLine);
 
         // Is this the first node in the linked list?
         if (head == NULL)
@@ -100,36 +102,36 @@ struct movie *processFile(char *filePath)
         }
     }
     free(currLine);
-    fclose(studentFile);
+    fclose(movieFile);
     return head;
 }
 
 /*
-* Print data for the given student
+* Print data for the given movie
 */
-void printStudent(struct student* aStudent){
-    printf("%s, %s %s, %s\n", aStudent->title,
-           aStudent->languages,
-           aStudent->lastName,
-           aStudent->rating);
+void printmovie(struct movie* amovie){
+    printf("%s, %s %s, %s\n", amovie->title,
+           amovie->languages,
+           amovie->year,
+           amovie->rating);
 }
 /*
-* Print the linked list of students
+* Print the linked list of movies
 */
-void printStudentList(struct student *list)
+void printmovieList(struct movie *list)
 {
     while (list != NULL)
     {
-        printStudent(list);
+        printmovie(list);
         list = list->next;
     }
 }
 
 /*
 *   Process the file provided as an argument to the program to
-*   create a linked list of student structs and print out the list.
+*   create a linked list of movie structs and print out the list.
 *   Compile the program as follows:
-*       gcc --std=gnu99 -o students main.c
+*       gcc --std=gnu99 -o movies main.c
 */
 
 int main(int argc, char *argv[])
@@ -137,12 +139,12 @@ int main(int argc, char *argv[])
     if (argc < 2)
     {
         printf("You must provide the name of the file to process\n");
-        printf("Example usage: ./students student_info1.txt\n");
+        printf("Example usage: ./movies movie_info1.txt\n");
         return EXIT_FAILURE;
     }
 ////    here it looks like you just need to put the file name and the other thing and it'll work
-    struct student *list = processFile(argv[1]);
-    printStudentList(list);
+    struct movie *list = processFile(argv[1]);
+    printmovieList(list);
     return EXIT_SUCCESS;
 }
 
