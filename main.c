@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <z3.h>
 
 //creating first change for github, otherwise this is the working copy
 
@@ -127,6 +128,22 @@ void printmovieList(struct movie *list)
     }
 }
 
+int printQuestion(void) {
+    printf("1. Show movies released in the specified year\n"
+           "2. Show highest rated movie for each year\n"
+           "3. Show the title and year of release of all movies in a specific language\n"
+           "4. Exit from the program\n"
+           "\n");
+           int num;
+           do {
+               printf("Enter a choice from 1 to 4: ");
+               scanf("%d",&num);
+           } while ((1 > num) || (num > 4));
+
+           return num;
+
+}
+
 /*
 *   Process the file provided as an argument to the program to
 *   create a linked list of movie structs and print out the list.
@@ -144,7 +161,23 @@ int main(int argc, char *argv[])
     }
 ////    here it looks like you just need to put the file name and the other thing and it'll work
     struct movie *list = processFile(argv[1]);
-    printmovieList(list);
+    while (true) {
+        printf("1. Show movies released in the specified year\n"
+               "2. Show highest rated movie for each year\n"
+               "3. Show the title and year of release of all movies in a specific language\n"
+               "4. Exit from the program\n"
+               "\n");
+        int num;
+        printf("Enter a choice from 1 to 4: ");
+        scanf("%d",&num);
+        while((1 > num) || (num > 4)) {
+            printf("Please enter a valid number");
+            scanf("%d",&num);
+        }
+        if (num == 4) {
+            return EXIT_SUCCESS;
+        }
+    }
     return EXIT_SUCCESS;
 }
 
