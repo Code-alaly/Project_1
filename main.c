@@ -9,6 +9,8 @@
 
 //this is working now?
 
+//creating a different branch that will be used to do things like write the program
+
 /* struct for student information */
 
 struct student
