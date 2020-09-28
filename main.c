@@ -13,56 +13,56 @@
 
 /* struct for student information */
 
-struct student
+struct movie
 {
-    char *onid;
-    char *lastName;
-    char *firstName;
-    char *major;
-    struct student *next;
+    char *title;
+    int *Year;
+    char *languages;
+    int *rating;
+    struct movie *next;
 };
 
 /* Parse the current line which is space delimited and create a
 *  student struct with the data in this line
 */
-struct student *createStudent(char *currLine)
+struct movie *createStudent(char *currLine)
 {
-    struct student *currStudent = malloc(sizeof(struct student));
+    struct movie *pMovie = malloc(sizeof(struct movie));
 
     // For use with strtok_r
     char *saveptr;
 
     // The first token is the ONID
-    char *token = strtok_r(currLine, " ", &saveptr);
-    currStudent->onid = calloc(strlen(token) + 1, sizeof(char));
-    strcpy(currStudent->onid, token);
+    char *token = strtok_r(currLine, " ", &saveptr); // make a char pointer, basically get the item that it's on
+    pMovie->title = calloc(strlen(token) + 1, sizeof(char)); // pmovie points to title, which is the length of token, get the string
+    strcpy(pMovie->title, token); //
 
     // The next token is the lastName
     token = strtok_r(NULL, " ", &saveptr);
-    currStudent->lastName = calloc(strlen(token) + 1, sizeof(char));
-    strcpy(currStudent->lastName, token);
+    pMovie->lastName = calloc(strlen(token) + 1, sizeof(char));
+    strcpy(pMovie->lastName, token);
 
     // The next token is the firstName
     token = strtok_r(NULL, " ", &saveptr);
-    currStudent->firstName = calloc(strlen(token) + 1, sizeof(char));
-    strcpy(currStudent->firstName, token);
+    pMovie->languages = calloc(strlen(token) + 1, sizeof(char));
+    strcpy(pMovie->languages, token);
 
-    // The last token is the major
+    // The last token is the rating
     token = strtok_r(NULL, "\n", &saveptr);
-    currStudent->major = calloc(strlen(token) + 1, sizeof(char));
-    strcpy(currStudent->major, token);
+    pMovie->rating = calloc(strlen(token) + 1, sizeof(int));
+    strcpy(pMovie->rating, token);
 
     // Set the next node to NULL in the newly created student entry
-    currStudent->next = NULL;
+    pMovie->next = NULL;
 
-    return currStudent;
+    return pMovie;
 }
 
 /*
 * Return a linked list of students by parsing data from
 * each line of the specified file.
 */
-struct student *processFile(char *filePath)
+struct movie *processFile(char *filePath)
 {
     // Open the specified file for reading only
     FILE *studentFile = fopen(filePath, "r");
@@ -108,10 +108,10 @@ struct student *processFile(char *filePath)
 * Print data for the given student
 */
 void printStudent(struct student* aStudent){
-    printf("%s, %s %s, %s\n", aStudent->onid,
-           aStudent->firstName,
+    printf("%s, %s %s, %s\n", aStudent->title,
+           aStudent->languages,
            aStudent->lastName,
-           aStudent->major);
+           aStudent->rating);
 }
 /*
 * Print the linked list of students
