@@ -1,6 +1,7 @@
 // If you are not compiling with the gcc option --std=gnu99, then
 // uncomment the following line or you might get a compiler warning
 #define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,20 +15,18 @@
 
 /* struct for movie information */
 
-struct movie
-{
+struct movie {
     char *title;
     int *year;
     char *languages;
-    int *rating;
+    double *rating;
     struct movie *next;
 };
 
 /* Parse the current line which is space delimited and create a
 *  movie struct with the data in this line
 */
-struct movie *createmovie(char *currLine)
-{
+struct movie *createmovie(char *currLine) {
     struct movie *pMovie = malloc(sizeof(struct movie));
 
     // For use with strtok_r
@@ -35,13 +34,14 @@ struct movie *createmovie(char *currLine)
 
     // The first token is the ONID
     char *token = strtok_r(currLine, ",", &saveptr); // make a char pointer, basically get the item that it's on
-    pMovie->title = calloc(strlen(token) + 1, sizeof(char)); // pmovie points to title, which is the length of token, get the string
+    pMovie->title = calloc(strlen(token) + 1,
+                           sizeof(char)); // pmovie points to title, which is the length of token, get the string
     strcpy(pMovie->title, token); //
-
     // The next token is the year
     token = strtok_r(NULL, ",", &saveptr);
+    int integer = atoi(token);
     pMovie->year = calloc(strlen(token) + 1, sizeof(char));
-    strcpy(pMovie->year, token);
+    pMovie->year = &integer;
 
     // The next token is the firstName
     token = strtok_r(NULL, ",", &saveptr);
@@ -50,8 +50,10 @@ struct movie *createmovie(char *currLine)
 
     // The last token is the rating
     token = strtok_r(NULL, "\r\n", &saveptr);
-    pMovie->rating = calloc(strlen(token) + 1, sizeof(int));
-    strcpy(pMovie->rating, token);
+    char *ptr;
+    double floatValue = strtod(token, &ptr);
+    pMovie->rating = calloc(strlen(token) + 1, sizeof(char));
+    pMovie->rating = &floatValue;
 
     // Set the next node to NULL in the newly created movie entry
     pMovie->next = NULL;
@@ -63,8 +65,7 @@ struct movie *createmovie(char *currLine)
 * Return a linked list of movies by parsing data from
 * each line of the specified file.
 */
-struct movie *processFile(char *filePath)
-{
+struct movie *processFile(char *filePath) {
     // Open the specified file for reading only
     FILE *movieFile = fopen(filePath, "r");
 
@@ -81,21 +82,17 @@ struct movie *processFile(char *filePath)
     nread = getline(&currLine, &len, movieFile);
 
     // Read the file line by line
-    while ((nread = getline(&currLine, &len, movieFile)) != -1)
-    {
+    while ((nread = getline(&currLine, &len, movieFile)) != -1) {
         // Get a new movie node corresponding to the current line
         struct movie *newNode = createmovie(currLine);
 
         // Is this the first node in the linked list?
-        if (head == NULL)
-        {
+        if (head == NULL) {
             // This is the first node in the linked link
             // Set the head and the tail to this node
             head = newNode;
             tail = newNode;
-        }
-        else
-        {
+        } else {
             // This is not the first node.
             // Add this node to the list and advance the tail
             tail->next = newNode;
@@ -110,21 +107,48 @@ struct movie *processFile(char *filePath)
 /*
 * Print data for the given movie
 */
-void printmovie(struct movie* amovie){
+
+void printmovie(struct movie *amovie) {
     printf("%s, %s %s, %s\n", amovie->title,
            amovie->languages,
            amovie->year,
            amovie->rating);
 }
+
 /*
 * Print the linked list of movies
 */
-void printmovieList(struct movie *list)
-{
-    while (list != NULL)
-    {
-        printmovie(list);
+void loopMovieList(struct movie *list, void (*f)(int)) {
+    while (list != NULL) {
+        (*f)(list);
         list = list->next;
+    }
+}
+
+void secondChoice(struct movie *list) {
+    while (list != NULL) {
+//        grab first items to compare against
+        char *title = list->title;
+        int *year = list->year;
+        int *rating = list->rating;
+//        go to next item
+        list = list->next;
+//        while in this year
+        while (&year == list->year) {
+//            if greater than the current rating
+            if (&rating < list->rating) {
+//                that becomes the new rating
+                *rating = list->rating;
+                *title = list->title;
+            }
+//            go to next item
+
+            list = list->next;
+        }
+//        at the end, print top movie
+        printf("%s, %s %s, %s\n", list->title,
+               list->year,
+               list->rating);
     }
 }
 
@@ -134,13 +158,13 @@ int printQuestion(void) {
            "3. Show the title and year of release of all movies in a specific language\n"
            "4. Exit from the program\n"
            "\n");
-           int num;
-           do {
-               printf("Enter a choice from 1 to 4: ");
-               scanf("%d",&num);
-           } while ((1 > num) || (num > 4));
+    int num;
+    do {
+        printf("Enter a choice from 1 to 4: ");
+        scanf("%d", &num);
+    } while ((1 > num) || (num > 4));
 
-           return num;
+    return num;
 
 }
 
@@ -151,10 +175,8 @@ int printQuestion(void) {
 *       gcc --std=gnu99 -o movies main.c
 */
 
-int main(int argc, char *argv[])
-{
-    if (argc < 2)
-    {
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
         printf("You must provide the name of the file to process\n");
         printf("Example usage: ./movies movie_info1.txt\n");
         return EXIT_FAILURE;
@@ -169,13 +191,16 @@ int main(int argc, char *argv[])
                "\n");
         int num;
         printf("Enter a choice from 1 to 4: ");
-        scanf("%d",&num);
-        while((1 > num) || (num > 4)) {
+        scanf("%d", &num);
+        while ((1 > num) || (num > 4)) {
             printf("Please enter a valid number");
-            scanf("%d",&num);
+            scanf("%d", &num);
         }
         if (num == 4) {
             return EXIT_SUCCESS;
+        }
+        if (num == 2) {
+            secondChoice(list);
         }
     }
     return EXIT_SUCCESS;
