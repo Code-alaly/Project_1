@@ -16,12 +16,53 @@
 /* struct for movie information */
 
 struct movie {
+//    so basically, the struct is why it's a pointer, that's what gets passed around, but stuff inside the struct
+// doesn't need to be pointerized, can just be regular values.
     char *title;
-    int *year;
+    int year;
     char *languages;
-    double *rating;
+    double rating;
     struct movie *next;
 };
+
+void my_swap(struct movie *node_1, struct movie *node_2) {
+
+    char *t_title = node_1->title;
+    int t_year = node_1->year;
+    char *t_languages = node_1->languages;
+    double t_rating = node_1->rating;
+    node_1->title = node_2->title;
+    node_1->year = node_2->year;
+    node_1->languages = node_2->languages;
+    node_1->rating = node_2->rating;
+    node_2->title = t_title;
+    node_2->year = t_year;
+    node_2->languages = t_languages;
+    node_2->rating = t_rating;
+}
+
+
+void bubble_sort(struct movie *list) {
+    int swapped;
+
+    struct movie *lptr;
+    struct movie *rpt = NULL;
+
+    swapped = 0;
+    lptr = list;
+    while (lptr->next != rpt) {
+        if (lptr->year > lptr->next->year) {
+            my_swap(lptr, lptr->next);
+            {
+                swapped = 1;
+            }
+            lptr = lptr->next;
+        }
+        rpt = lptr;
+    }
+    while (swapped);
+
+}
 
 /* Parse the current line which is space delimited and create a
 *  movie struct with the data in this line
@@ -32,7 +73,7 @@ struct movie *createmovie(char *currLine) {
     // For use with strtok_r
     char *saveptr;
 
-    // The first token is the ONID
+    // The first token is the Title
     char *token = strtok_r(currLine, ",", &saveptr); // make a char pointer, basically get the item that it's on
     pMovie->title = calloc(strlen(token) + 1,
                            sizeof(char)); // pmovie points to title, which is the length of token, get the string
@@ -40,10 +81,10 @@ struct movie *createmovie(char *currLine) {
     // The next token is the year
     token = strtok_r(NULL, ",", &saveptr);
     int integer = atoi(token);
-    pMovie->year = calloc(strlen(token) + 1, sizeof(char));
-    pMovie->year = &integer;
+//    pMovie->year = calloc(integer, sizeof(int));
+    pMovie->year = integer;
 
-    // The next token is the firstName
+    // The next token is the languages
     token = strtok_r(NULL, ",", &saveptr);
     pMovie->languages = calloc(strlen(token) + 1, sizeof(char));
     strcpy(pMovie->languages, token);
@@ -52,8 +93,7 @@ struct movie *createmovie(char *currLine) {
     token = strtok_r(NULL, "\r\n", &saveptr);
     char *ptr;
     double floatValue = strtod(token, &ptr);
-    pMovie->rating = calloc(strlen(token) + 1, sizeof(char));
-    pMovie->rating = &floatValue;
+    pMovie->rating = floatValue;
 
     // Set the next node to NULL in the newly created movie entry
     pMovie->next = NULL;
@@ -101,8 +141,10 @@ struct movie *processFile(char *filePath) {
     }
     free(currLine);
     fclose(movieFile);
+    bubble_sort(head);
     return head;
 }
+
 
 /*
 * Print data for the given movie
@@ -129,26 +171,26 @@ void secondChoice(struct movie *list) {
     while (list != NULL) {
 //        grab first items to compare against
         char *title = list->title;
-        int *year = list->year;
-        int *rating = list->rating;
+        int year = list->year;
+        double rating = list->rating;
 //        go to next item
         list = list->next;
 //        while in this year
-        while (&year == list->year) {
+        while (year == list->year) {
 //            if greater than the current rating
-            if (&rating < list->rating) {
+            if (rating < list->rating) {
 //                that becomes the new rating
-                *rating = list->rating;
-                *title = list->title;
+                rating = list->rating;
+                title = list->title;
             }
 //            go to next item
 
             list = list->next;
         }
 //        at the end, print top movie
-        printf("%s, %s %s, %s\n", list->title,
-               list->year,
-               list->rating);
+        printf("%s, %u %ld, \n", title,
+               year,
+               rating);
     }
 }
 
@@ -183,6 +225,7 @@ int main(int argc, char *argv[]) {
     }
 ////    here it looks like you just need to put the file name and the other thing and it'll work
     struct movie *list = processFile(argv[1]);
+
     while (true) {
         printf("1. Show movies released in the specified year\n"
                "2. Show highest rated movie for each year\n"
