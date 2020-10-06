@@ -171,12 +171,13 @@ void loopMovieList(struct movie *list, void (*f)(struct movie *list)) {
 }
 
 void secondChoice(struct movie *list) {
-    while (list != NULL) {
+    while (1) {
 //        grab first items to compare against
         char *title = list->title;
         int year = list->year;
         double rating = list->rating;
 //        go to next item
+
         list = list->next;
 //        while in this year
         while (year == list->year) {
@@ -187,11 +188,13 @@ void secondChoice(struct movie *list) {
                 title = list->title;
             }
 //            go to next item
-
+            if (list->next == NULL) {
+                return;
+            }
             list = list->next;
         }
 //        at the end, print top movie
-        printf("%s, %u %ld, \n", title,
+        printf("%s, %u %f, \n", title,
                year,
                rating);
     }
