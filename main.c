@@ -44,7 +44,7 @@ void my_swap(struct movie *node_1, struct movie *node_2) {
 
 void bubble_sort(struct movie *list) {
     int swapped;
-
+// so that just means you're declaring what will be a movie struct, pointer of memory.
     struct movie *lptr;
     struct movie *rpt = NULL;
     do {
@@ -120,7 +120,6 @@ struct movie *processFile(char *filePath) {
     struct movie *tail = NULL;
 
     nread = getline(&currLine, &len, movieFile);
-
     // Read the file line by line
     while ((nread = getline(&currLine, &len, movieFile)) != -1) {
         // Get a new movie node corresponding to the current line
@@ -151,16 +150,20 @@ struct movie *processFile(char *filePath) {
 */
 
 void printmovie(struct movie *amovie) {
-    printf("%s, %s %s, %s\n", amovie->title,
-           amovie->languages,
-           amovie->year,
-           amovie->rating);
+    while (amovie != NULL) {
+        printf("%s, %s, %d, %f\n", amovie->title,
+               amovie->languages,
+               amovie->year,
+               amovie->rating);
+        amovie = amovie->next;
+    }
+
 }
 
 /*
 * Print the linked list of movies
 */
-void loopMovieList(struct movie *list, void (*f)(int)) {
+void loopMovieList(struct movie *list, void (*f)(struct movie *list)) {
     while (list != NULL) {
         (*f)(list);
         list = list->next;
@@ -195,6 +198,7 @@ void secondChoice(struct movie *list) {
 }
 
 int printQuestion(void) {
+
     printf("1. Show movies released in the specified year\n"
            "2. Show highest rated movie for each year\n"
            "3. Show the title and year of release of all movies in a specific language\n"
@@ -225,6 +229,7 @@ int main(int argc, char *argv[]) {
     }
 ////    here it looks like you just need to put the file name and the other thing and it'll work
     struct movie *list = processFile(argv[1]);
+    printmovie(list);
 
     while (true) {
         printf("1. Show movies released in the specified year\n"
