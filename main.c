@@ -47,22 +47,22 @@ void bubble_sort(struct movie *list) {
 
     struct movie *lptr;
     struct movie *rpt = NULL;
-
-    swapped = 0;
-    lptr = list;
-    while (lptr->next != rpt) {
-        if (lptr->year > lptr->next->year) {
-            my_swap(lptr, lptr->next);
-            {
+    do {
+        swapped = 0;
+        lptr = list;
+        while (lptr->next != rpt) {
+            if (lptr->year < lptr->next->year) {
+                my_swap(lptr, lptr->next);
                 swapped = 1;
             }
             lptr = lptr->next;
+
         }
         rpt = lptr;
-    }
-    while (swapped);
+    } while (swapped);
 
 }
+
 
 /* Parse the current line which is space delimited and create a
 *  movie struct with the data in this line
