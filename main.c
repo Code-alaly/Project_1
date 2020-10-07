@@ -6,7 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <z3.h>
-
+#define ROW 3
+#define COL 10
 //creating first change for github, otherwise this is the working copy
 
 //this is working now?
@@ -20,7 +21,7 @@ struct movie {
 // doesn't need to be pointerized, can just be regular values.
     char *title;
     int year;
-    char *languages;
+    char **languages;
     double rating;
     struct movie *next;
 };
@@ -29,15 +30,20 @@ void my_swap(struct movie *node_1, struct movie *node_2) {
 
     char *t_title = node_1->title;
     int t_year = node_1->year;
-    char *t_languages = node_1->languages;
+    char (*t_languages)[11] = node_1->languages;
     double t_rating = node_1->rating;
     node_1->title = node_2->title;
     node_1->year = node_2->year;
-    node_1->languages = node_2->languages;
+    for (int i = 0; i <= 2; i++) {
+        strcpy(node_1->languages[i], node_2->languages[i]);
+    }
+//    node_1->languages  =  node_2->languages;
     node_1->rating = node_2->rating;
     node_2->title = t_title;
     node_2->year = t_year;
-    node_2->languages = t_languages;
+    for (int i = 0; i < 2; i++) {
+        strcpy(node_2->languages[i], t_languages[i]);
+    }
     node_2->rating = t_rating;
 }
 
@@ -86,13 +92,40 @@ struct movie *createmovie(char *currLine) {
 
     // The next token is the languages
     token = strtok_r(NULL, ",", &saveptr);
-    pMovie->languages = calloc(strlen(token) + 1, sizeof(char));
-    strcpy(pMovie->languages, token);
+
+    char *delim = ";";
+    char *string = token;
+    int i=0;
+    int j=0;
+    char temp[40];
+//    this part just gets rid of fluff at beginning
+    for(i=1;i<strlen(string)-1;i++){
+        temp[j++]=string[i];
+    }
+    strcpy(string,temp);
+    int count = 0;
+    char *b[ROW];
+    char *ptr = strtok(string, delim);
+//    this part allocates memory for b
+    for (i=0 ; i<5; i++) {
+        if ((b[i] = malloc(sizeof(char) * COL)) == NULL) {
+            printf("unable to allocate memory \n");
+            return -1;
+        }
+    }
+    while (ptr != NULL) {
+        strcpy(b[count], ptr);
+        count++;
+        ptr = strtok(NULL, delim);
+    }
+    pMovie->languages = b;
+//    pMovie->languages = calloc(strlen(token) + 1, sizeof(char));
+//    strcpy(pMovie->languages, token);
 
     // The last token is the rating
     token = strtok_r(NULL, "\r\n", &saveptr);
-    char *ptr;
-    double floatValue = strtod(token, &ptr);
+    char *ptr2;
+    double floatValue = strtod(token, &ptr2);
     pMovie->rating = floatValue;
 
     // Set the next node to NULL in the newly created movie entry
@@ -163,6 +196,18 @@ void printmovie(struct movie *amovie) {
 /*
 * Print the linked list of movies
 */
+
+void choice_one(struct movie *list, int year) {
+    while (list != NULL) {
+        if (list->year == year) {
+            do printf("%s", list->title);
+            while (list->year == year);
+            return;
+        }
+        list = list->next;
+    }
+}
+
 void loopMovieList(struct movie *list, void (*f)(struct movie *list)) {
     while (list != NULL) {
         (*f)(list);
@@ -246,6 +291,11 @@ int main(int argc, char *argv[]) {
         while ((1 > num) || (num > 4)) {
             printf("Please enter a valid number");
             scanf("%d", &num);
+        }
+        if (num == 1) {
+            printf("Enter the year for which you want to see movies:");
+            scanf("%d", &num);
+            choice_one(list, num);
         }
         if (num == 4) {
             return EXIT_SUCCESS;
