@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <z3.h>
+
 #define ROW 3
 #define COL 10
 //creating first change for github, otherwise this is the working copy
@@ -109,27 +110,17 @@ struct movie *createmovie(char *currLine) {
     int i=0;
     int j=0;
     char temp[40];
-//    this part just gets rid of fluff at beginning
     for(i=1;i<strlen(string)-1;i++){
         temp[j++]=string[i];
     }
     strcpy(string,temp);
     int count = 0;
-    char *b[ROW];
     char *ptr = strtok(string, delim);
-//    this part allocates memory for b
-    for (i=0 ; i<5; i++) {
-        if ((b[i] = malloc(sizeof(char) * COL)) == NULL) {
-            printf("unable to allocate memory \n");
-            return -1;
-        }
-    }
     while (ptr != NULL) {
-        strcpy(b[count], ptr);
+        strcpy(pMovie->languages[count], ptr);
         count++;
         ptr = strtok(NULL, delim);
     }
-    pMovie->languages = b;
 //    pMovie->languages = calloc(strlen(token) + 1, sizeof(char));
 //    strcpy(pMovie->languages, token);
 
