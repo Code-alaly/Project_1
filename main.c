@@ -21,30 +21,41 @@ struct movie {
 // doesn't need to be pointerized, can just be regular values.
     char *title;
     int year;
-    char **languages;
+    char languages[3][11];
     double rating;
     struct movie *next;
 };
 
-void my_swap(struct movie *node_1, struct movie *node_2) {
-
-    char *t_title = node_1->title;
-    int t_year = node_1->year;
-    char (*t_languages)[11] = node_1->languages;
-    double t_rating = node_1->rating;
-    node_1->title = node_2->title;
-    node_1->year = node_2->year;
+void strCopy(struct movie *node_1, struct movie *node_2) {
     for (int i = 0; i <= 2; i++) {
         strcpy(node_1->languages[i], node_2->languages[i]);
     }
+}
+
+void my_swap(struct movie *node_1, struct movie *node_2) {
+    struct movie *t_movie;
+    t_movie = node_1;
+    node_1 = node_2;
+    node_2 = t_movie;
+//    char *t_title = node_1->title;
+//    int t_year = node_1->year;
+//    char t_languages[3][11];
+//
+//    double t_rating = node_1->rating;
+//    node_1->title = node_2->title;
+//    node_1->year = node_2->year;
+//    for (int i = 0; i <= 2; i++) {
+//        strcpy(node_1->languages[i], node_2->languages[i]);
+//    }
 //    node_1->languages  =  node_2->languages;
-    node_1->rating = node_2->rating;
-    node_2->title = t_title;
-    node_2->year = t_year;
-    for (int i = 0; i < 2; i++) {
-        strcpy(node_2->languages[i], t_languages[i]);
-    }
-    node_2->rating = t_rating;
+
+//    node_1->rating = node_2->rating;
+//    node_2->title = t_title;
+//    node_2->year = t_year;
+//    for (int i = 0; i < 2; i++) {
+//        strcpy(node_2->languages[i], t_languages[i]);
+//    }
+//    node_2->rating = t_rating;
 }
 
 
