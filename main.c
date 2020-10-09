@@ -36,48 +36,10 @@ void strCopy(struct movie *node_1, struct movie *node_2) {
     }
 }
 
-void my_swap(struct movie *node_1, struct movie *node_2) {
-    struct movie *t_movie;
-    t_movie->title = node_1->title;
-    t_movie->year = node_1->year;
-    t_movie->rating = node_1->rating;
-    strCopy(t_movie, node_1);
-
-//    node_1 = node_2;
-//    node_2 = t_movie;
-    node_1->title = node_2->title;
-    node_1->year = node_2->year;
-//    there may be abug with string copy... s in spanish not showing up perhaps.
-    strCopy(node_1, node_2);
-
-    node_1->rating = node_2->rating;
-    node_2->title = t_movie->title;
-    node_2->year = t_movie->year;
-    strCopy(node_2, t_movie);
-    node_2->rating = t_movie->rating;
-}
 
 
-//void bubble_sort(struct movie *list) {
-//    int swapped;
-//// so that just means you're declaring what will be a movie struct, pointer of memory.
-//    struct movie *lptr;
-//    struct movie *rpt = NULL;
-//    do {
-//        swapped = 0;
-//        lptr = list;
-//        while (lptr->next != rpt) {
-//            if (lptr->year < lptr->next->year) {
-//                my_swap(lptr, lptr->next);
-//                swapped = 1;
-//            }
-//            lptr = lptr->next;
-//
-//        }
-//        rpt = lptr;
-//    } while (swapped);
-//
-//}
+
+
 
 void list_bubble_sort(struct movie **list)
 {
@@ -243,7 +205,8 @@ void printmovie(struct movie *amovie) {
 void choice_one(struct movie *list, int year) {
     while (list != NULL) {
         if (list->year == year) {
-            do printf("%s\n", list->title);
+            do {printf("%s\n", list->title);
+            list = list->next;}
             while (list->year == year);
             return;
         }
@@ -318,25 +281,17 @@ int main(int argc, char *argv[]) {
         printf("Example usage: ./movies movie_info1.txt\n");
         return EXIT_FAILURE;
     }
-////    here it looks like you just need to put the file name and the other thing and it'll work
+
     struct movie *list = processFile(argv[1]);
-//    trying to figure out how to print the diffirnet string arrays. so far
-//      while it's not null printing every char is segfault
-//      pointing it to a char * and printing that is seg fault
-//      going to keep trying to find out why it's all segfault. 
-    struct movie *thing = malloc(sizeof(struct movie));
 
-    strcpy(thing->languages[0], "fireFight");
-//    int i = 0;
-//    char arry[2][10] = {"big", "dig"};
-//    for (int j = 0; j < 2; j++) {
-//        for (int k=0; k < 10; k++) {
-////            arry [j][k] = '.';
-//            printf("%c", arry[j][k]);
-//        }
-//    }
-//    printf("%s", thing->languages[0]);
+// I need to understand pointers, references, dereferences, and everything of that nature,
+// Literally as soon as I can because that will save me a looooot of trouble.
 
+// I currently don't understand how to use this language, and it is giving me trouble.
+// I must learn about how to use pointers, if I am going to survive this class.
+// I can't just put a pointer or dereference sign and think "maybe it will work this time",
+// That is not going to be an option. I will learn what they all mean, and understand when
+// and how to use them all. and that will make these next 3 months a whole lot easier on me.
 
     printmovie(list);
 
