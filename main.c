@@ -58,25 +58,56 @@ void my_swap(struct movie *node_1, struct movie *node_2) {
 }
 
 
-void bubble_sort(struct movie *list) {
-    int swapped;
-// so that just means you're declaring what will be a movie struct, pointer of memory.
-    struct movie *lptr;
-    struct movie *rpt = NULL;
-    do {
-        swapped = 0;
-        lptr = list;
-        while (lptr->next != rpt) {
-            if (lptr->year < lptr->next->year) {
-                my_swap(lptr, lptr->next);
-                swapped = 1;
+//void bubble_sort(struct movie *list) {
+//    int swapped;
+//// so that just means you're declaring what will be a movie struct, pointer of memory.
+//    struct movie *lptr;
+//    struct movie *rpt = NULL;
+//    do {
+//        swapped = 0;
+//        lptr = list;
+//        while (lptr->next != rpt) {
+//            if (lptr->year < lptr->next->year) {
+//                my_swap(lptr, lptr->next);
+//                swapped = 1;
+//            }
+//            lptr = lptr->next;
+//
+//        }
+//        rpt = lptr;
+//    } while (swapped);
+//
+//}
+
+void list_bubble_sort(struct movie **list)
+{
+    int done = 0;         // True if no swaps were made in a pass
+
+    // Don't try to sort empty or single-node lists
+    if (*list == NULL || (*list)->next == NULL) return;
+
+    while (!done) {
+        struct movie **pv = list;            // "source" of the pointer to the
+        // current node in the list struct
+        struct movie *nd = *list;            // local iterator pointer
+        struct movie *nx = (*list)->next;  // local next pointer
+
+        done = 1;
+
+        while (nx) {
+
+            if (nd->year > nx->year) {
+                nd->next = nx->next;
+                nx->next = nd;
+                *pv = nx;
+
+                done = 0;
             }
-            lptr = lptr->next;
-
+            pv = &nd->next;
+            nd = nx;
+            nx = nx->next;
         }
-        rpt = lptr;
-    } while (swapped);
-
+    }
 }
 
 
@@ -182,7 +213,7 @@ struct movie *processFile(char *filePath) {
     free(currLine);
     fclose(movieFile);
     printf("Test\n");
-    bubble_sort(head);
+    list_bubble_sort(&head);
     printf("Test\n");
     return head;
 }
@@ -305,8 +336,7 @@ int main(int argc, char *argv[]) {
 //        }
 //    }
 //    printf("%s", thing->languages[0]);
-    char* moose = "Mooses";
-    printf("$s\n", moose);
+
 
     printmovie(list);
 
