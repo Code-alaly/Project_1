@@ -9,6 +9,7 @@
 
 #define ROW 3
 #define COL 10
+#define BUFFER 11
 //creating first change for github, otherwise this is the working copy
 
 //this is working now?
@@ -22,41 +23,38 @@ struct movie {
 // doesn't need to be pointerized, can just be regular values.
     char *title;
     int year;
-    char languages[3][11];
+    char languages[3][12];
     double rating;
     struct movie *next;
 };
 
 void strCopy(struct movie *node_1, struct movie *node_2) {
+
     for (int i = 0; i <= 2; i++) {
+        memset(node_1->languages[i],0,BUFFER);
         strcpy(node_1->languages[i], node_2->languages[i]);
     }
 }
 
 void my_swap(struct movie *node_1, struct movie *node_2) {
     struct movie *t_movie;
-    t_movie = node_1;
-    node_1 = node_2;
-    node_2 = t_movie;
-//    char *t_title = node_1->title;
-//    int t_year = node_1->year;
-//    char t_languages[3][11];
-//
-//    double t_rating = node_1->rating;
-//    node_1->title = node_2->title;
-//    node_1->year = node_2->year;
-//    for (int i = 0; i <= 2; i++) {
-//        strcpy(node_1->languages[i], node_2->languages[i]);
-//    }
-//    node_1->languages  =  node_2->languages;
+    t_movie->title = node_1->title;
+    t_movie->year = node_1->year;
+    t_movie->rating = node_1->rating;
+    strCopy(t_movie, node_1);
 
-//    node_1->rating = node_2->rating;
-//    node_2->title = t_title;
-//    node_2->year = t_year;
-//    for (int i = 0; i < 2; i++) {
-//        strcpy(node_2->languages[i], t_languages[i]);
-//    }
-//    node_2->rating = t_rating;
+//    node_1 = node_2;
+//    node_2 = t_movie;
+    node_1->title = node_2->title;
+    node_1->year = node_2->year;
+//    there may be abug with string copy... s in spanish not showing up perhaps.
+    strCopy(node_1, node_2);
+
+    node_1->rating = node_2->rating;
+    node_2->title = t_movie->title;
+    node_2->year = t_movie->year;
+    strCopy(node_2, t_movie);
+    node_2->rating = t_movie->rating;
 }
 
 
@@ -108,14 +106,22 @@ struct movie *createmovie(char *currLine) {
     char *delim = ";";
     char *string = token;
     int i=0;
-    int j=0;
     char temp[40];
-    for(i=1;i<strlen(string)-1;i++){
-        temp[j++]=string[i];
+    int k=0;
+    while (string[k] !=  NULL) {
+        if (string[k] != 93) {
+            if (string[k] != 91) {
+                // i only moves up for temp if there's something to write
+                temp[i] = string[k];
+                i++;
+            }
+        }
+
+        k++;
     }
-    strcpy(string,temp);
+//    strcpy(string,temp);
     int count = 0;
-    char *ptr = strtok(string, delim);
+    char *ptr = strtok(temp, delim);
     while (ptr != NULL) {
         strcpy(pMovie->languages[count], ptr);
         count++;
@@ -175,7 +181,9 @@ struct movie *processFile(char *filePath) {
     }
     free(currLine);
     fclose(movieFile);
+    printf("Test\n");
     bubble_sort(head);
+    printf("Test\n");
     return head;
 }
 
@@ -186,8 +194,10 @@ struct movie *processFile(char *filePath) {
 
 void printmovie(struct movie *amovie) {
     while (amovie != NULL) {
-        printf("%s, %s, %d, %f\n", amovie->title,
-               amovie->languages,
+        printf("%s, %s, %s, %s, %d, %f\n", amovie->title,
+               amovie->languages[0],
+               amovie->languages[1],
+               amovie->languages[2],
                amovie->year,
                amovie->rating);
         amovie = amovie->next;
@@ -202,7 +212,7 @@ void printmovie(struct movie *amovie) {
 void choice_one(struct movie *list, int year) {
     while (list != NULL) {
         if (list->year == year) {
-            do printf("%s", list->title);
+            do printf("%s\n", list->title);
             while (list->year == year);
             return;
         }
@@ -256,7 +266,7 @@ int printQuestion(void) {
            "\n");
     int num;
     do {
-        printf("Enter a choice from 1 to 4: ");
+        printf("Enter a choice from 1 to 4: \n");
         scanf("%d", &num);
     } while ((1 > num) || (num > 4));
 
@@ -279,6 +289,25 @@ int main(int argc, char *argv[]) {
     }
 ////    here it looks like you just need to put the file name and the other thing and it'll work
     struct movie *list = processFile(argv[1]);
+//    trying to figure out how to print the diffirnet string arrays. so far
+//      while it's not null printing every char is segfault
+//      pointing it to a char * and printing that is seg fault
+//      going to keep trying to find out why it's all segfault. 
+    struct movie *thing = malloc(sizeof(struct movie));
+
+    strcpy(thing->languages[0], "fireFight");
+//    int i = 0;
+//    char arry[2][10] = {"big", "dig"};
+//    for (int j = 0; j < 2; j++) {
+//        for (int k=0; k < 10; k++) {
+////            arry [j][k] = '.';
+//            printf("%c", arry[j][k]);
+//        }
+//    }
+//    printf("%s", thing->languages[0]);
+    char* moose = "Mooses";
+    printf("$s\n", moose);
+
     printmovie(list);
 
     while (true) {
@@ -288,14 +317,14 @@ int main(int argc, char *argv[]) {
                "4. Exit from the program\n"
                "\n");
         int num;
-        printf("Enter a choice from 1 to 4: ");
+        printf("Enter a choice from 1 to 4: \n");
         scanf("%d", &num);
         while ((1 > num) || (num > 4)) {
-            printf("Please enter a valid number");
+            printf("Please enter a valid number\n");
             scanf("%d", &num);
         }
         if (num == 1) {
-            printf("Enter the year for which you want to see movies:");
+            printf("Enter the year for which you want to see movies:\n");
             scanf("%d", &num);
             choice_one(list, num);
         }
