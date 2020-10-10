@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <z3.h>
+//#include <z3.h>
 
 #define ROW 3
 #define COL 10
@@ -31,18 +31,13 @@ struct movie {
 void strCopy(struct movie *node_1, struct movie *node_2) {
 
     for (int i = 0; i <= 2; i++) {
-        memset(node_1->languages[i],0,BUFFER);
+        memset(node_1->languages[i], 0, BUFFER);
         strcpy(node_1->languages[i], node_2->languages[i]);
     }
 }
 
 
-
-
-
-
-void list_bubble_sort(struct movie **list)
-{
+void list_bubble_sort(struct movie **list) {
     int done = 0;         // True if no swaps were made in a pass
 
     // Don't try to sort empty or single-node lists
@@ -98,10 +93,10 @@ struct movie *createmovie(char *currLine) {
 
     char *delim = ";";
     char *string = token;
-    int i=0;
+    int i = 0;
     char temp[40];
-    int k=0;
-    while (string[k] !=  NULL) {
+    int k = 0;
+    while (string[k] != NULL) {
         if (string[k] != 93) {
             if (string[k] != 91) {
                 // i only moves up for temp if there's something to write
@@ -203,14 +198,20 @@ void printmovie(struct movie *amovie) {
 */
 
 void choice_one(struct movie *list, int year) {
+    int found = 0;
     while (list != NULL) {
         if (list->year == year) {
-            do {printf("%s\n", list->title);
-            list = list->next;}
-            while (list->year == year);
+            do {
+                found = 1;
+                printf("%s\n", list->title);
+                list = list->next;
+            } while (list->year == year);
             return;
         }
         list = list->next;
+    }
+    if (!found) {
+        printf("No movies were made in this year\n");
     }
 }
 
@@ -251,29 +252,17 @@ void secondChoice(struct movie *list) {
     }
 }
 
-int printQuestion(void) {
-
-    printf("1. Show movies released in the specified year\n"
-           "2. Show highest rated movie for each year\n"
-           "3. Show the title and year of release of all movies in a specific language\n"
-           "4. Exit from the program\n"
-           "\n");
-    int num;
-    do {
-        printf("Enter a choice from 1 to 4: \n");
-        scanf("%d", &num);
-    } while ((1 > num) || (num > 4));
-
-    return num;
-
+void choiceThree(struct movie *list, char *lang) {
+    while (list != NULL) {
+        for (int i = 0; i > 3; i++) {
+            if(strcmp(list->languages[i], lang) == 0) {
+                printf("%i %s\n", list->year, list->title);
+            };
+        }
+        list = list->next;
+    }
 }
 
-/*
-*   Process the file provided as an argument to the program to
-*   create a linked list of movie structs and print out the list.
-*   Compile the program as follows:
-*       gcc --std=gnu99 -o movies main.c
-*/
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -293,9 +282,8 @@ int main(int argc, char *argv[]) {
 // That is not going to be an option. I will learn what they all mean, and understand when
 // and how to use them all. and that will make these next 3 months a whole lot easier on me.
 
-    printmovie(list);
 
-    while (true) {
+    while (1) {
         printf("1. Show movies released in the specified year\n"
                "2. Show highest rated movie for each year\n"
                "3. Show the title and year of release of all movies in a specific language\n"
@@ -317,7 +305,14 @@ int main(int argc, char *argv[]) {
             return EXIT_SUCCESS;
         }
         if (num == 2) {
+
             secondChoice(list);
+        }
+        if (num == 3) {
+            char *lang;
+            printf("Enter the language for the movies you want to see:\n");
+            scanf("%s", lang);
+            choiceThree(list, lang);
         }
     }
     return EXIT_SUCCESS;
