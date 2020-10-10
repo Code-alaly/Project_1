@@ -10,17 +10,12 @@
 #define ROW 3
 #define COL 10
 #define BUFFER 11
-//creating first change for github, otherwise this is the working copy
-
-//this is working now?
-
-//creating a different branch that will be used to do things like write the program
 
 /* struct for movie information */
 
 struct movie {
-//    so basically, the struct is why it's a pointer, that's what gets passed around, but stuff inside the struct
-// doesn't need to be pointerized, can just be regular values.
+    //    so basically, the struct is why it's a pointer, that's what gets passed around, but stuff inside the struct
+    // doesn't need to be pointerized, can just be regular values.
     char *title;
     int year;
     char languages[5][12];
@@ -85,7 +80,7 @@ struct movie *createmovie(char *currLine) {
     // The next token is the year
     token = strtok_r(NULL, ",", &saveptr);
     int integer = atoi(token);
-//    pMovie->year = calloc(integer, sizeof(int));
+    //    pMovie->year = calloc(integer, sizeof(int));
     pMovie->year = integer;
 
     // The next token is the languages
@@ -94,22 +89,10 @@ struct movie *createmovie(char *currLine) {
     char *delim = ";";
     char *string = token;
     int i = 0;
+    //    takes away brackets
     string++;
-    string[strlen(string)-1] = 0;
-//    char temp[40];
-//    int k = 0;
-//    while (string[k] != NULL) {
-//        if (string[k] != 93) {
-//            if (string[k] != 91) {
-//                // i only moves up for temp if there's something to write
-//                temp[i] = string[k];
-//                i++;
-//            }
-//        }
-//
-//        k++;
-//    }
-////    strcpy(string,temp);
+    string[strlen(string) - 1] = 0;
+    // copies strings into language arrays
     int count = 0;
     char *ptr = strtok(string, delim);
     while (ptr != NULL) {
@@ -117,8 +100,8 @@ struct movie *createmovie(char *currLine) {
         count++;
         ptr = strtok(NULL, delim);
     }
-//    pMovie->languages = calloc(strlen(token) + 1, sizeof(char));
-//    strcpy(pMovie->languages, token);
+    //    pMovie->languages = calloc(strlen(token) + 1, sizeof(char));
+    //    strcpy(pMovie->languages, token);
 
     // The last token is the rating
     token = strtok_r(NULL, "\r\n", &saveptr);
@@ -171,9 +154,7 @@ struct movie *processFile(char *filePath) {
     }
     free(currLine);
     fclose(movieFile);
-    printf("Test\n");
     list_bubble_sort(&head);
-    printf("Test\n");
     return head;
 }
 
@@ -183,6 +164,7 @@ struct movie *processFile(char *filePath) {
 */
 
 void printmovie(struct movie *amovie) {
+    //    printed out all movie data for testing
     while (amovie != NULL) {
         printf("%s, %s, %s, %s, %s, %s, %d, %f\n", amovie->title,
                amovie->languages[0],
@@ -202,6 +184,7 @@ void printmovie(struct movie *amovie) {
 */
 
 void choice_one(struct movie *list, int year) {
+    //    finds all movies made in the given year
     int found = 0;
     while (list != NULL) {
         if (list->year == year) {
@@ -228,28 +211,28 @@ void loopMovieList(struct movie *list, void (*f)(struct movie *list)) {
 
 void secondChoice(struct movie *list) {
     while (1) {
-//        grab first items to compare against
+        //        grab first items to compare against
         char *title = list->title;
         int year = list->year;
         double rating = list->rating;
-//        go to next item
+        //        go to next item
 
         list = list->next;
-//        while in this year
+        //        while in this year
         while (year == list->year) {
-//            if greater than the current rating
+            //            if greater than the current rating
             if (rating < list->rating) {
-//                that becomes the new rating
+                //                that becomes the new rating
                 rating = list->rating;
                 title = list->title;
             }
-//            go to next item
+            //            go to next item
             if (list->next == NULL) {
                 return;
             }
             list = list->next;
         }
-//        at the end, print top movie
+        //        at the end, print top movie
         printf("%s, %u %f, \n", title,
                year,
                rating);
@@ -257,10 +240,11 @@ void secondChoice(struct movie *list) {
 }
 
 void choiceThree(struct movie *list, char *lang) {
+    // takes the language, looks through the movie languages, if it matches, print it. if none, tell user
     int found = 0;
     while (list != NULL) {
         for (int i = 0; i < 4; i++) {
-            if(strcmp(list->languages[i], lang) == 0) {
+            if (strcmp(list->languages[i], lang) == 0) {
                 found = 1;
                 printf("%i %s\n", list->year, list->title);
             };
@@ -282,16 +266,24 @@ int main(int argc, char *argv[]) {
 
     struct movie *list = processFile(argv[1]);
 
-// I need to understand pointers, references, dereferences, and everything of that nature,
-// Literally as soon as I can because that will save me a looooot of trouble.
+    // I need to understand pointers, references, dereferences, and everything of that nature,
+    // Literally as soon as I can because that will save me a looooot of trouble.
 
-// I currently don't understand how to use this language, and it is giving me trouble.
-// I must learn about how to use pointers, if I am going to survive this class.
-// I can't just put a pointer or dereference sign and think "maybe it will work this time",
-// That is not going to be an option. I will learn what they all mean, and understand when
-// and how to use them all. and that will make these next 3 months a whole lot easier on me.
+    // I currently don't understand how to use this language, and it is giving me trouble.
+    // I must learn about how to use pointers, if I am going to survive this class.
+    // I can't just put a pointer or dereference sign and think "maybe it will work this time",
+    // That is not going to be an option. I will learn what they all mean, and understand when
+    // and how to use them all. and that will make these next 3 months a whole lot easier on me.
+    int count = 0;
+    while (list != NULL) {
+        list = list->next;
+        count++;
+    }
 
-    printmovie(list);
+    printf("Processed file %s and parsed data for %i movies\n", argv[1], count);
+    printf("\n");
+
+
     while (1) {
         printf("1. Show movies released in the specified year\n"
                "2. Show highest rated movie for each year\n"
