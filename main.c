@@ -23,7 +23,7 @@ struct movie {
 // doesn't need to be pointerized, can just be regular values.
     char *title;
     int year;
-    char languages[4][12];
+    char languages[5][12];
     double rating;
     struct movie *next;
 };
@@ -94,22 +94,24 @@ struct movie *createmovie(char *currLine) {
     char *delim = ";";
     char *string = token;
     int i = 0;
-    char temp[40];
-    int k = 0;
-    while (string[k] != NULL) {
-        if (string[k] != 93) {
-            if (string[k] != 91) {
-                // i only moves up for temp if there's something to write
-                temp[i] = string[k];
-                i++;
-            }
-        }
-
-        k++;
-    }
-//    strcpy(string,temp);
+    string++;
+    string[strlen(string)-1] = 0;
+//    char temp[40];
+//    int k = 0;
+//    while (string[k] != NULL) {
+//        if (string[k] != 93) {
+//            if (string[k] != 91) {
+//                // i only moves up for temp if there's something to write
+//                temp[i] = string[k];
+//                i++;
+//            }
+//        }
+//
+//        k++;
+//    }
+////    strcpy(string,temp);
     int count = 0;
-    char *ptr = strtok(temp, delim);
+    char *ptr = strtok(string, delim);
     while (ptr != NULL) {
         strcpy(pMovie->languages[count], ptr);
         count++;
@@ -182,10 +184,12 @@ struct movie *processFile(char *filePath) {
 
 void printmovie(struct movie *amovie) {
     while (amovie != NULL) {
-        printf("%s, %s, %s, %s, %d, %f\n", amovie->title,
+        printf("%s, %s, %s, %s, %s, %s, %d, %f\n", amovie->title,
                amovie->languages[0],
                amovie->languages[1],
                amovie->languages[2],
+               amovie->languages[3],
+               amovie->languages[4],
                amovie->year,
                amovie->rating);
         amovie = amovie->next;
@@ -287,7 +291,7 @@ int main(int argc, char *argv[]) {
 // That is not going to be an option. I will learn what they all mean, and understand when
 // and how to use them all. and that will make these next 3 months a whole lot easier on me.
 
-
+    printmovie(list);
     while (1) {
         printf("1. Show movies released in the specified year\n"
                "2. Show highest rated movie for each year\n"
