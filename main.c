@@ -253,13 +253,18 @@ void secondChoice(struct movie *list) {
 }
 
 void choiceThree(struct movie *list, char *lang) {
+    int found = 0;
     while (list != NULL) {
-        for (int i = 0; i > 3; i++) {
+        for (int i = 0; i < 3; i++) {
             if(strcmp(list->languages[i], lang) == 0) {
+                found = 1;
                 printf("%i %s\n", list->year, list->title);
             };
         }
         list = list->next;
+    }
+    if (!found) {
+        printf("No movies were found with this language\n");
     }
 }
 
