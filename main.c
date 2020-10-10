@@ -23,7 +23,7 @@ struct movie {
 // doesn't need to be pointerized, can just be regular values.
     char *title;
     int year;
-    char languages[3][12];
+    char languages[4][12];
     double rating;
     struct movie *next;
 };
@@ -255,7 +255,7 @@ void secondChoice(struct movie *list) {
 void choiceThree(struct movie *list, char *lang) {
     int found = 0;
     while (list != NULL) {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             if(strcmp(list->languages[i], lang) == 0) {
                 found = 1;
                 printf("%i %s\n", list->year, list->title);
